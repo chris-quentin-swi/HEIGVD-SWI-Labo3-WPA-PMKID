@@ -1,7 +1,6 @@
+- 
 - [Livrables](#livrables)
-
 - [Échéance](#échéance)
-
 - [Travail à réaliser](#travail-à-réaliser)
 
 # Sécurité des réseaux sans fil
@@ -68,3 +67,33 @@ Un fork du repo original . Puis, un Pull Request contenant **vos noms** et :
 ## Échéance
 
 Le 06 mai 2021 à 23h59
+
+
+
+
+
+## Rendu
+
+**Auteurs:** Barros Henriques Chris, Saucy Quentin
+
+
+
+
+
+### Partie 3: Attaque hashcat
+
+
+
+On récupère les hash de la capture avec hcxpcaptool afin de pouvoir le donner à hashcat par la suite:
+
+![](files/ex3_screenshots/hxcpcaptool_output.png)
+
+On lance ensute hashcat comme ceci:
+
+![](files/ex3_screenshots/hashcat_launch.png)
+
+
+
+On trouve donc la passphrase:
+
+![](files/ex3_screenshots/hashcat_output.png)
